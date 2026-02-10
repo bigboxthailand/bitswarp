@@ -8,6 +8,7 @@ import { EVMService } from './src/services/EVMService';
 import { SolanaService } from './src/services/SolanaService';
 import { PriceService } from './src/services/PriceService';
 import { config } from 'dotenv';
+import { nanoid } from 'nanoid';
 
 config();
 
@@ -24,8 +25,6 @@ const evmService = new EVMService(
     process.env.EVM_RPC_URL || 'https://rpc.sepolia.org',
     process.env.AGENT_PRIVATE_KEY
 );
-
-import { nanoid } from 'nanoid';
 
 // --- Local Storage (Mock DB for MVP) ---
 const partners = new Map<string, { id: string, name: string, owner: string }>();
@@ -115,7 +114,10 @@ const app = new Elysia()
 
                 return { success: true, intent, extraData, message: intent.reasoning };
             }, {
-                body: t.Object({ message: t.String(), user_address: t.Optional(t.String()) })
+                body: t.Object({ 
+                    message: t.String(), 
+                    user_address: t.Optional(t.String()) 
+                })
             })
         )
         .group('/market', (app) => app
