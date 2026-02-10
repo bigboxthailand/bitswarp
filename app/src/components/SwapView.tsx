@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowDown, Info } from 'lucide-react';
 
-export const SwapView = ({ evmAddress, solAddress, onSwap }: any) => {
+export const SwapView = ({ onSwap }: any) => {
   const [fromToken, setFromToken] = useState('SOL');
   const [toToken, setToToken] = useState('USDC');
   const [amount, setAmount] = useState('');

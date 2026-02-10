@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Wallet, PieChart, Settings, Zap, CheckCircle2, Repeat } from 'lucide-react'
+import { Wallet, Zap, CheckCircle2, Repeat } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAccount, useConnect, useDisconnect, useWriteContract } from 'wagmi'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
@@ -8,10 +8,6 @@ import { VersionedTransaction } from '@solana/web3.js'
 import axios from 'axios'
 import { PortfolioView } from './components/PortfolioView'
 import { SwapView } from './components/SwapView'
-
-const POOL_ABI = [
-  { name: 'executeSwap', type: 'function', stateMutability: 'nonpayable', inputs: [{ name: 'user', type: 'address' }, { name: 'tokenIn', type: 'address' }, { name: 'tokenOut', type: 'address' }, { name: 'amountIn', type: 'uint256' }, { name: 'amountOut', type: 'uint256' }] }
-] as const;
 
 function App() {
   const [showConfirm, setShowConfirm] = useState(false)
@@ -23,7 +19,6 @@ function App() {
   const { address: evmAddress, isConnected: isEVMConnected } = useAccount()
   const { connect, connectors } = useConnect()
   const { disconnect } = useDisconnect()
-  const { writeContractAsync } = useWriteContract()
   const { publicKey, sendTransaction } = useWallet()
   const { connection } = useConnection()
 
