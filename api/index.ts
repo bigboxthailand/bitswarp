@@ -115,7 +115,7 @@ const app = new Elysia()
 
                 return { success: true, intent, extraData, message: intent.reasoning };
             }, {
-                body: t.Object({ message: t.String(), user_address: t.String().optional() })
+                body: t.Object({ message: t.String(), user_address: t.Optional(t.String()) })
             })
         )
         .group('/market', (app) => app
