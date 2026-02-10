@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Wallet, Zap, CheckCircle2, Repeat } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { VersionedTransaction } from '@solana/web3.js'
@@ -19,6 +19,10 @@ function App() {
   const { address: evmAddress, isConnected: isEVMConnected } = useAccount()
   const { connect, connectors } = useConnect()
   const { disconnect } = useDisconnect()
+  const { data: evmBalanceData } = useBalance({
+    address: evmAddress,
+  })
+  const ethBalance = evmBalanceData ? parseFloat(evmBalanceData.formatted) : 0
 
   const handleConnectEVM = () => {
     // Try to find Metamask specifically if it exists, otherwise use the first one
@@ -110,7 +114,7 @@ function App() {
             onSwap={handleSwapRequest}
           />
         ) : (
-          <PortfolioView solBalance={solBalance} />
+          <PortfolioView solBalance={solBalance} ethBalance={ethBalance} />
         )}
         
         {statusMsg && (

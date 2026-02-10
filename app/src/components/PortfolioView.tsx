@@ -11,17 +11,17 @@ const data = [
   { name: 'Sun', value: 9200 },
 ];
 
-export const PortfolioView = ({ solBalance }: { solBalance: number }) => {
+export const PortfolioView = ({ solBalance, ethBalance }: { solBalance: number, ethBalance: number }) => {
   return (
     <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="admin-card p-6 bg-primary/5 border-primary/10">
           <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold mb-1">Total Balance</p>
-          <h4 className="text-3xl font-extrabold text-white">${(solBalance * 98.5).toLocaleString()}</h4>
+          <h4 className="text-3xl font-extrabold text-white">${((solBalance * 98.5) + (ethBalance * 2450)).toLocaleString()}</h4>
           <div className="flex items-center gap-1 mt-2 text-emerald-400 text-xs font-bold">
             <ArrowUpRight size={14} />
-            <span>+12.4% ($1,450)</span>
+            <span>+12.4%</span>
           </div>
         </div>
         <div className="admin-card p-6">
@@ -40,7 +40,7 @@ export const PortfolioView = ({ solBalance }: { solBalance: number }) => {
       <div className="admin-card p-8 min-h-[400px] flex flex-col">
         <div className="flex justify-between items-center mb-8">
             <div>
-                <h3 className="text-lg font-bold flex items-center gap-2">
+                <h3 className="text-lg font-bold flex items-center gap-2 text-white">
                     <TrendingUp size={20} className="text-primary" />
                     Performance Analytics
                 </h3>
@@ -77,7 +77,7 @@ export const PortfolioView = ({ solBalance }: { solBalance: number }) => {
       {/* Assets Table */}
       <div className="admin-card overflow-hidden">
         <div className="p-6 border-b border-white/5 flex justify-between items-center">
-            <h3 className="font-bold">Your Assets</h3>
+            <h3 className="font-bold text-white">Your Assets</h3>
             <button className="text-xs text-primary font-bold hover:underline">Manage All</button>
         </div>
         <table className="w-full text-left">
@@ -91,8 +91,8 @@ export const PortfolioView = ({ solBalance }: { solBalance: number }) => {
             </thead>
             <tbody className="text-sm">
                 <AssetRow name="Solana" symbol="SOL" balance={solBalance} price={98.50} change="+2.4%" />
+                <AssetRow name="Ethereum" symbol="ETH" balance={ethBalance} price={2450.00} change="-1.2%" />
                 <AssetRow name="USD Coin" symbol="USDC" balance={0.00} price={1.00} change="0.0%" />
-                <AssetRow name="Ethereum" symbol="ETH" balance={0.00} price={2450.00} change="-1.2%" />
             </tbody>
         </table>
       </div>
@@ -112,9 +112,9 @@ function AssetRow({ name, symbol, balance, price, change }: any) {
                     </div>
                 </div>
             </td>
-            <td className="px-6 py-5 font-medium">{balance.toFixed(4)} {symbol}</td>
+            <td className="px-6 py-5 font-medium text-white">{balance.toFixed(4)} {symbol}</td>
             <td className="px-6 py-5">
-                <p className="font-medium">${price.toLocaleString()}</p>
+                <p className="font-medium text-white">${price.toLocaleString()}</p>
                 <p className={`text-[10px] font-bold ${change.startsWith('+') ? 'text-emerald-500' : change.startsWith('-') ? 'text-red-500' : 'text-zinc-500'}`}>{change}</p>
             </td>
             <td className="px-6 py-5 text-right font-bold text-white">${(balance * price).toLocaleString()}</td>
