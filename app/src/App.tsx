@@ -19,6 +19,13 @@ function App() {
   const { address: evmAddress, isConnected: isEVMConnected } = useAccount()
   const { connect, connectors } = useConnect()
   const { disconnect } = useDisconnect()
+
+  const handleConnectEVM = () => {
+    // Try to find Metamask specifically if it exists, otherwise use the first one
+    const metamask = connectors.find(c => c.name.toLowerCase().includes('metamask'))
+    const connector = metamask || connectors[0]
+    if (connector) connect({ connector })
+  }
   const { publicKey, sendTransaction } = useWallet()
   const { connection } = useConnection()
 
@@ -89,7 +96,7 @@ function App() {
           <div className="flex items-center gap-3">
             <WalletMultiButton className="!h-10 !bg-zinc-900 !rounded-xl !border !border-white/10 !text-[10px] !font-bold hover:!bg-zinc-800 transition-all !uppercase" />
             {!isEVMConnected ? (
-              <button onClick={() => connect({ connector: connectors[0] })} className="h-10 px-6 bg-primary text-white rounded-xl text-[10px] font-bold shadow-lg shadow-primary/20 transition-all uppercase tracking-widest">Connect EVM</button>
+              <button onClick={handleConnectEVM} className="h-10 px-6 bg-primary text-white rounded-xl text-[10px] font-bold shadow-lg shadow-primary/20 transition-all uppercase tracking-widest">Connect EVM</button>
             ) : (
               <button onClick={() => disconnect()} className="h-10 px-4 bg-zinc-900 rounded-xl text-[10px] font-bold border border-white/10">{evmAddress?.slice(0,6)}...{evmAddress?.slice(-4)}</button>
             )}
