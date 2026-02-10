@@ -12,8 +12,18 @@ export class SolanaService {
         }
     }
 
-    async getJupiterQuote(inputMint: string, outputMint: string, amount: number) {
+    private SYMBOL_TO_MINT: { [key: string]: string } = {
+        'SOL': 'So11111111111111111111111111111111111111112',
+        'USDC': 'EPjFW36Rc7H1fLEJQ7dg97rgEgY93yt7z3i7G6PHf8b',
+        'USDT': 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
+        'BONK': 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'
+    };
+
+    async getJupiterQuote(inputToken: string, outputToken: string, amount: number) {
         try {
+            const inputMint = this.SYMBOL_TO_MINT[inputToken.toUpperCase()] || inputToken;
+            const outputMint = this.SYMBOL_TO_MINT[outputToken.toUpperCase()] || outputToken;
+            
             const url = `https://quote-api.jup.ag/v6/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=50`;
             const response = await axios.get(url);
             return response.data;

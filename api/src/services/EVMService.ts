@@ -61,10 +61,20 @@ export class EVMService {
         return await this.client.writeContract(request);
     }
 
+    private SYMBOL_TO_ADDRESS: { [key: string]: string } = {
+        'ETH': '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+        'USDC': '0xA0b86a33E6441b8a46a59DE4c4C5E8F5a6a7A8d0',
+        'USDT': '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+        'LINK': '0x514910771af9ca656af840dff83e8264ecf986ca'
+    };
+
     async getOpenOceanQuote(chain: string, inToken: string, outToken: string, amount: number) {
         try {
+            const inAddress = this.SYMBOL_TO_ADDRESS[inToken.toUpperCase()] || inToken;
+            const outAddress = this.SYMBOL_TO_ADDRESS[outToken.toUpperCase()] || outToken;
+            
             const chainId = chain === 'ethereum' ? 1 : 11155111; // Sepolia
-            const url = `https://open-api.openocean.finance/v3/${chainId}/quote?inTokenAddress=${inToken}&outTokenAddress=${outToken}&amount=${amount}&gasPrice=5`;
+            const url = `https://open-api.openocean.finance/v3/${chainId}/quote?inTokenAddress=${inAddress}&outTokenAddress=${outAddress}&amount=${amount}&gasPrice=5`;
             const response = await axios.get(url);
             return response.data;
         } catch (error) {
