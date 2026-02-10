@@ -5,6 +5,7 @@ import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { VersionedTransaction } from '@solana/web3.js'
+import { formatUnits } from 'viem'
 import axios from 'axios'
 import { PortfolioView } from './components/PortfolioView'
 import { SwapView } from './components/SwapView'
@@ -22,14 +23,15 @@ function App() {
   const { data: evmBalanceData } = useBalance({
     address: evmAddress,
   })
-  const ethBalance = evmBalanceData ? parseFloat(evmBalanceData.formatted) : 0
+
+  const ethBalance = evmBalanceData ? parseFloat(formatUnits(evmBalanceData.value, evmBalanceData.decimals)) : 0
 
   const handleConnectEVM = () => {
-    // Try to find Metamask specifically if it exists, otherwise use the first one
     const metamask = connectors.find(c => c.name.toLowerCase().includes('metamask'))
     const connector = metamask || connectors[0]
     if (connector) connect({ connector })
   }
+
   const { publicKey, sendTransaction } = useWallet()
   const { connection } = useConnection()
 
@@ -67,7 +69,6 @@ function App() {
             alert(`Success! Signature: ${signature}`)
             fetchSolBalance()
         } else {
-            // EVM Logic here
             alert("EVM Swap initiated. Confirm in Metamask.")
         }
     } catch (err: any) {
@@ -109,8 +110,6 @@ function App() {
 
         {currentTab === 'swap' ? (
           <SwapView 
-            evmAddress={evmAddress} 
-            solAddress={publicKey?.toBase58()} 
             onSwap={handleSwapRequest}
           />
         ) : (
