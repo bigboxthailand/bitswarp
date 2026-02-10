@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Wallet, Zap, CheckCircle2, Repeat } from 'lucide-react'
+import { Wallet, Zap, CheckCircle2, Repeat, MessageSquare } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
@@ -20,10 +20,7 @@ function App() {
   const { address: evmAddress, isConnected: isEVMConnected } = useAccount()
   const { connect, connectors } = useConnect()
   const { disconnect } = useDisconnect()
-  const { data: evmBalanceData } = useBalance({
-    address: evmAddress,
-  })
-
+  const { data: evmBalanceData } = useBalance({ address: evmAddress })
   const ethBalance = evmBalanceData ? parseFloat(formatUnits(evmBalanceData.value, evmBalanceData.decimals)) : 0
 
   const handleConnectEVM = () => {
@@ -98,20 +95,29 @@ function App() {
       <main className="flex-1 flex flex-col relative bg-[radial-gradient(circle_at_50%_0%,_rgba(59,130,246,0.03)_0%,_transparent_50%)]">
         <header className="h-20 border-b border-white/5 flex items-center justify-between px-8 backdrop-blur-md sticky top-0 z-10">
           <h1 className="font-bold text-lg uppercase italic">{currentTab === 'swap' ? 'Warp Engine' : 'Asset Portfolio'}</h1>
-          <div className="flex items-center gap-3">
-            <WalletMultiButton className="!h-10 !bg-zinc-900 !rounded-xl !border !border-white/10 !text-[10px] !font-bold hover:!bg-zinc-800 transition-all !uppercase" />
-            {!isEVMConnected ? (
-              <button onClick={handleConnectEVM} className="h-10 px-6 bg-primary text-white rounded-xl text-[10px] font-bold shadow-lg shadow-primary/20 transition-all uppercase tracking-widest">Connect EVM</button>
-            ) : (
-              <button onClick={() => disconnect()} className="h-10 px-4 bg-zinc-900 rounded-xl text-[10px] font-bold border border-white/10">{evmAddress?.slice(0,6)}...{evmAddress?.slice(-4)}</button>
-            )}
+          
+          {/* Multi-Chain Wallet Display */}
+          <div className="flex items-center gap-2">
+            <div className="flex flex-col items-end gap-0.5">
+              <span className="text-[7px] text-zinc-500 font-bold uppercase tracking-widest mr-1">Solana</span>
+              <WalletMultiButton className="!h-8 !bg-zinc-900 !rounded-lg !border !border-white/5 !text-[9px] !font-bold hover:!bg-zinc-800 transition-all !px-3" />
+            </div>
+            <div className="w-[1px] h-8 bg-white/10 mx-1" />
+            <div className="flex flex-col items-end gap-0.5">
+              <span className="text-[7px] text-zinc-500 font-bold uppercase tracking-widest mr-1">EVM</span>
+              {!isEVMConnected ? (
+                <button onClick={handleConnectEVM} className="h-8 px-4 bg-primary text-white rounded-lg text-[9px] font-bold shadow-lg shadow-primary/20 transition-all uppercase">Connect</button>
+              ) : (
+                <button onClick={() => disconnect()} className="h-8 px-3 bg-zinc-900 rounded-lg text-[9px] font-bold border border-white/5 hover:text-red-400 transition-colors">
+                    {evmAddress?.slice(0,6)}...{evmAddress?.slice(-4)}
+                </button>
+              )}
+            </div>
           </div>
         </header>
 
         {currentTab === 'swap' ? (
-          <SwapView 
-            onSwap={handleSwapRequest}
-          />
+          <SwapView onSwap={handleSwapRequest} />
         ) : (
           <PortfolioView solBalance={solBalance} ethBalance={ethBalance} />
         )}
