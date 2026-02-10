@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+:root {
+  --color-background: #050505;
+  --color-foreground: #fafafa;
+  --color-admin-primary: #f59e0b; /* Amber for Admin */
+}
+
+@theme {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --color-primary: var(--color-admin-primary);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.admin-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1.5rem;
+}

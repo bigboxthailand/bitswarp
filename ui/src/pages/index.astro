@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Hero, Features } from '../components/Landing';
+---
+
+<Layout title="BitSwarp | AI-Powered Multi-chain DEX">
+	<main>
+		<Hero client:load />
+		<Features client:load />
+		
+		<!-- Footer -->
+		<footer class="py-20 border-t border-white/5 text-center">
+			<p class="text-[10px] text-zinc-500 uppercase tracking-[0.3em]">
+				Built for the Agentic Era • BitSwarp Protocol 2026
+			</p>
+		</footer>
+	</main>
+</Layout>

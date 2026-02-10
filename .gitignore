@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.astro/
+
+# Environment variables & Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+secrets.env
+
+# Foundry/Solidity
+cache/
+broadcast/
+
+# OS/IDEs
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.log
+
+# Misc
+.cache/
+.npm/
+bun.lockb
+simulation_run.ts
