@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { MessageSquare, Wallet, PieChart, Settings, Send, Zap, Loader2, CheckCircle2, XCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAccount, useConnect, useDisconnect, useWriteContract } from 'wagmi'

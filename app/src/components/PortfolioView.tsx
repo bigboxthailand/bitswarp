@@ -1,6 +1,5 @@
-import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { TrendingUp, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { TrendingUp, ArrowUpRight } from 'lucide-react';
 
 const data = [
   { name: 'Mon', value: 4000 },
