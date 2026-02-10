@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Wallet, Zap, CheckCircle2, Repeat } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAccount, useConnect, useDisconnect, useWriteContract } from 'wagmi'
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { VersionedTransaction } from '@solana/web3.js'
