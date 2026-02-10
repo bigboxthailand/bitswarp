@@ -22,6 +22,9 @@ const evmService = new EVMService(
 
 const partners = new Map<string, { id: string, name: string, owner: string }>();
 
+// Add default internal key for official app dashboard
+partners.set('your-internal-key', { id: 'official-app', name: 'BitSwarp Dashboard', owner: 'System' });
+
 const adminAuth = (app: Elysia) => app.derive(({ headers, set }) => {
     const adminKey = headers['x-admin-key'];
     if (adminKey !== process.env.ADMIN_SECRET_KEY) {
