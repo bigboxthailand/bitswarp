@@ -91,8 +91,8 @@ export const PortfolioView = ({ solBalance }: { solBalance: number }) => {
             </thead>
             <tbody className="text-sm">
                 <AssetRow name="Solana" symbol="SOL" balance={solBalance} price={98.50} change="+2.4%" />
-                <AssetRow name="USD Coin" symbol="USDC" balance={1250.00} price={1.00} change="0.0%" />
-                <AssetRow name="Ethereum" symbol="ETH" balance={0.15} price={2450.00} change="-1.2%" />
+                <AssetRow name="USD Coin" symbol="USDC" balance={0.00} price={1.00} change="0.0%" />
+                <AssetRow name="Ethereum" symbol="ETH" balance={0.00} price={2450.00} change="-1.2%" />
             </tbody>
         </table>
       </div>
