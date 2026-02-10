@@ -3,19 +3,11 @@ import { swagger } from '@elysiajs/swagger';
 import { cors } from '@elysiajs/cors';
 import { rateLimit } from 'elysia-rate-limit';
 import { serverTiming } from '@elysiajs/server-timing';
-import { AIService } from './src/services/AIService';
-import { EVMService } from './src/services/EVMService';
-import { SolanaService } from './src/services/SolanaService';
 import { PriceService } from './src/services/PriceService';
 import { config } from 'dotenv';
 import { nanoid } from 'nanoid';
 
 config();
-
-const aiService = new AIService(
-    process.env.AI_API_KEY || 'sk-placeholder',
-    process.env.AI_BASE_URL
-);
 
 const solanaService = new SolanaService(
     process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com'
@@ -64,6 +56,50 @@ const app = new Elysia()
     }))
     .get('/', () => ({ status: 'BitSwarp API Online 🦞⚡', timestamp: new Date().toISOString() }))
     
+    // --- Public Trade Execution (For Bots & App) ---
+    .group('/v1', (app) => app
+        .group('/trade', (app) => app
+            .use(agentAuth)
+            .post('/execute', async ({ body, authenticated, error }) => {
+                if (!authenticated) return error(401, { success: false, message: "Valid x-agent-key required" });
+
+                // No AI analysis here - purely structured data execution for maximum efficiency
+                const { chain, action, from_token, to_token, amount, user_address } = body;
+
+                if (action !== 'swap') return { success: false, error: 'Only swap action is currently supported' };
+
+                let extraData: any = {};
+                if (chain === 'solana') {
+                    const quote = await solanaService.getJupiterQuote(
+                        from_token, // Now expects a Mint Address or Symbol handled by service
+                        to_token,
+                        (amount || 0) * 1e9
+                    );
+                    if (quote && user_address) {
+                        const swapTransaction = await solanaService.getJupiterSwapTransaction(user_address, quote);
+                        extraData = { quote, swapTransaction };
+                    }
+                } else if (chain === 'ethereum' || chain === 'sepolia') {
+                    const quote = await evmService.getOpenOceanQuote(chain, from_token, to_token, amount || 0);
+                    extraData = { quote };
+                }
+
+                return { 
+                    success: true, 
+                    execution_payload: extraData,
+                    message: `Execution payload generated for ${amount} ${from_token} to ${to_token}`
+                };
+            }, {
+                body: t.Object({ 
+                    chain: t.String(),
+                    action: t.String(),
+                    from_token: t.String(),
+                    to_token: t.String(),
+                    amount: t.Number(),
+                    user_address: t.Optional(t.String()) 
+                })
+            })
+        )
     // --- Public API Routes ---
     .group('/v1', (app) => app
         .group('/agents', (app) => app
@@ -83,40 +119,6 @@ const app = new Elysia()
                 body: t.Object({
                     name: t.String(),
                     owner: t.String()
-                })
-            })
-        )
-        .group('/trade', (app) => app
-            .use(agentAuth)
-            .post('/intent', async ({ body, authenticated, error }) => {
-                if (!authenticated) return error(401, { success: false, message: "Valid x-agent-key required" });
-
-                const intent = await aiService.parseIntent(body.message);
-                if (intent.action === 'unknown') return { success: false, error: intent.reasoning };
-
-                let extraData: any = {};
-                if (intent.action === 'swap') {
-                    if (intent.chain === 'solana') {
-                        const quote = await solanaService.getJupiterQuote(
-                            'So11111111111111111111111111111111111111112',
-                            'EPjFW36Rc7H1fLEJQ7dg97rgEgY93yt7z3i7G6PHf8b',
-                            (intent.amount || 0) * 1e9
-                        );
-                        if (quote && body.user_address) {
-                            const swapTransaction = await solanaService.getJupiterSwapTransaction(body.user_address, quote);
-                            extraData = { quote, swapTransaction };
-                        }
-                    } else if (intent.chain === 'ethereum' || intent.chain === 'sepolia') {
-                        const quote = await evmService.getOpenOceanQuote(intent.chain, '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', '0xdAC17F958D2ee523a2206206994597C13D831ec7', intent.amount || 0);
-                        extraData = { quote };
-                    }
-                }
-
-                return { success: true, intent, extraData, message: intent.reasoning };
-            }, {
-                body: t.Object({ 
-                    message: t.String(), 
-                    user_address: t.Optional(t.String()) 
                 })
             })
         )

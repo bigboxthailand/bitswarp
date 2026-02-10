@@ -7,11 +7,10 @@ BitSwarp is a high-performance, intelligent trading protocol designed for the ag
 
 ## 🚀 Key Features
 
-- **🧠 AI Intent Engine:** Trade using natural language. No more complex forms—just tell BitSwarp what you want to do.
-- **🌐 Multi-Chain Support:** Seamlessly integrated with Ethereum (EVM/Monad) and Solana.
-- **🛡️ Institutional Grade Security:** Non-custodial vaults with reentrancy protection, emergency circuit breakers, and AI safety guards.
-- **⚡ Pro-Tier Execution:** Connected to Jupiter (Solana) and OpenOcean (EVM) for real-time best-price routing.
-- **📊 Unified Dashboard:** A premium, real-time interface for asset management and portfolio tracking.
+- **⚡ High-Speed Execution:** Direct-to-aggregator routing via Jupiter (Solana) and OpenOcean (EVM).
+- **🛡️ Multi-Chain Security:** Non-custodial vaults with reentrancy protection and emergency pause.
+- **🏗️ Builder-First API:** Clean, structured JSON API for bots and agents to execute trades and earn fees.
+- **📊 Professional Dashboard:** Real-time portfolio tracking and market analysis for human users.
 
 ---
 
