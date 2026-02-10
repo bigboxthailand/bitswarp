@@ -7,7 +7,14 @@ import { PriceService } from './src/services/PriceService';
 import { config } from 'dotenv';
 import { nanoid } from 'nanoid';
 
+import { AIService } from './src/services/AIService';
+
 config();
+
+const aiService = new AIService(
+    process.env.AI_API_KEY || 'sk-placeholder',
+    process.env.AI_BASE_URL
+);
 
 const solanaService = new SolanaService(
     process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com'
@@ -56,6 +63,22 @@ const app = new Elysia()
     }))
     .get('/', () => ({ status: 'BitSwarp API Online 🦞⚡', timestamp: new Date().toISOString() }))
     
+    // --- Private AI Analysis (Official App Only) ---
+    .group('/v1/internal', (app) => app
+        .post('/chat', async ({ body, headers, set }) => {
+            // Protection: Only our app with the correct key can use the AIสมอง
+            if (headers['x-app-secret'] !== process.env.ADMIN_SECRET_KEY) {
+                set.status = 401;
+                return { success: false, error: "Unauthorized AI Access" };
+            }
+
+            const intent = await aiService.parseIntent(body.message);
+            return { success: true, intent };
+        }, {
+            body: t.Object({ message: t.String() })
+        })
+    )
+
     // --- Public Trade Execution (For Bots & App) ---
     .group('/v1', (app) => app
         .group('/trade', (app) => app

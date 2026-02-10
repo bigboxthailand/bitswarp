@@ -67,25 +67,42 @@ function App() {
     setIsTyping(true)
 
     try {
-      const response = await axios.post('http://localhost:3000/v1/trade/intent', {
-        message: userMsg,
+      // 1. Get AI Analysis (Private)
+      const aiRes = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/internal/chat`, {
+        message: userMsg
+      }, {
+        headers: { 'x-app-secret': import.meta.env.VITE_ADMIN_KEY }
+      });
+
+      if (!aiRes.data.success) {
+        setMessages(prev => [...prev, { role: 'assistant', text: "AI Analysis error." }]);
+        return;
+      }
+
+      const intent = aiRes.data.intent;
+
+      // 2. Execute Structured Trade
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/trade/execute`, {
+        chain: intent.chain || 'solana',
+        action: intent.action,
+        from_token: intent.from_token || 'SOL',
+        to_token: intent.to_token || 'USDC',
+        amount: intent.amount || 0,
         user_address: publicKey?.toBase58() || evmAddress
       }, {
         headers: { 'x-agent-key': 'your-internal-key' }
       })
 
       if (response.data.success) {
-        setMessages(prev => [...prev, { role: 'assistant', text: response.data.message }])
-        if (response.data.intent.action === 'swap') {
-            setPendingTrade(response.data)
-            setShowConfirm(true)
-        }
+        setMessages(prev => [...prev, { role: 'assistant', text: `Verified Intent: ${intent.action} ${intent.amount} ${intent.from_token}. ${intent.reasoning}` }])
+        setPendingTrade({ intent, extraData: response.data.execution_payload })
+        setShowConfirm(true)
       } else {
         setMessages(prev => [...prev, { role: 'assistant', text: response.data.error || "I'm sorry, I couldn't understand that request." }])
       }
     } catch (error) {
       console.error('API Error:', error)
-      setMessages(prev => [...prev, { role: 'assistant', text: "Connection error. Make sure the API Gateway is running on port 3000." }])
+      setMessages(prev => [...prev, { role: 'assistant', text: "Connection error. Make sure the API Gateway is running." }])
     } finally {
       setIsTyping(false)
     }
